@@ -5,7 +5,7 @@ import re
 import logging
 import string
 from urllib.parse import quote
-import urllib.request as req
+import urllib.request
 from bs4 import BeautifulSoup
 
 from ehforwarderbot import EFBMiddleware, EFBMsg, MsgType
@@ -15,7 +15,11 @@ from . import __version__ as version
 
 class LinkPreview:
     def __init__(self, url):
-        self._html = req.urlopen(url).read().decode('utf-8')
+        if any(ord(c) > 127 for c in url):
+            url = quote(url, safe = string.printable)
+        headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.103 Safari/537.36'}
+        req = urllib.request.Request(url=url, headers=headers)
+        self._html = urllib.request.urlopen(req).read().decode('utf-8')
         self._soup = BeautifulSoup(self._html, 'html.parser')
         self.title = self._get_title()
         self.desc = self._get_description()
@@ -106,13 +110,14 @@ class LinkPreviewMiddleware(EFBMiddleware):
         if not self.sent_by_master(message):
             return message
 
-        re_url = r'.*(https?:\/\/[\w\.\/]+)\s?.*'
+        # re_url = r'http[s]?:\/\/(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+        re_url = r'https?:\/\/\S+'
         msg_text = message.text
         url = re.search(re_url, msg_text)
         if not url:
             return message
+        url = url.group(0)
         
-        url = quote(url.group(1), safe = string.printable)
         try:
             # dict_elem = link_preview.generate_dict(url)
             # title = dict_elem['title']
@@ -121,8 +126,8 @@ class LinkPreviewMiddleware(EFBMiddleware):
             # title, description, _ = web_preview(url)
             title = lp.title
             desc = lp.desc
-        except:
-            self.logger.error("Failed to get link preview.")
+        except Exception as e:
+            self.logger.error("Failed to get link preview: {}".format(e))
             return message
 
         text = '\n'.join([
