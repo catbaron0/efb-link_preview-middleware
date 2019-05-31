@@ -5,6 +5,7 @@
 **Middleware ID**: `catbaron.link_preview`
 
 **LinkPreview** is a middleware for EFB to generqate link preview for the first url contained by the message.
+![example]()./example.jpg)
 
 You need to use **MessageBlocker** on top of [EFB](https://ehforwarderbot.readthedocs.io). Please check the document and install EFB first.
 
