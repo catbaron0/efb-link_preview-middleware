@@ -11,6 +11,7 @@ You need to use **MessageBlocker** on top of [EFB](https://ehforwarderbot.readth
 ## Dependense
 * Python >=3.6
 * EFB >=2.0.0b15
+* webpreview
 
 ## Install
 
