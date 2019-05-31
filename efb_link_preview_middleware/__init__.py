@@ -135,7 +135,7 @@ class LinkPreviewMiddleware(EFBMiddleware):
             'preview'.center(23, '='),
             title.center(23),
             '-'*27,
-            desc
+            str(desc)
             ])
         
         message.text = text
