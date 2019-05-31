@@ -3,16 +3,76 @@ import io
 import os
 import re
 import logging
-from typing import IO, Any, Dict, Optional, List, Tuple
-from tempfile import NamedTemporaryFile
+import string
+from urllib.parse import quote
+import urllib.request as req
+from bs4 import BeautifulSoup
 
 from ehforwarderbot import EFBMiddleware, EFBMsg, MsgType
+from typing import Optional
 from . import __version__ as version
-from webpreview import web_preview
+# from link_preview import link_preview
 
-class LinkPreview(EFBMiddleware):
+class LinkPreview:
+    def __init__(self, url):
+        self._html = req.urlopen(url).read().decode('utf-8')
+        self._soup = BeautifulSoup(self._html, 'html.parser')
+        self.title = self._get_title()
+        self.desc = self._get_description()
+        self.image = self._get_image()
+
+    def _get_title(self):
+        """
+        Extract title from the given web page.
+        """
+        soup = self._soup
+        # if title tag is present and has text in it, return it as the title
+        if (soup.title and soup.title.text != ""):
+            return soup.title.text
+        # else if h1 tag is present and has text in it, return it as the title
+        if (soup.h1 and soup.h1.text != ""):
+            return soup.h1.text
+        # if no title, h1 return None
+        return None
+
+    def _get_description(self):
+        """
+        Extract description from the given web page.
+        """
+        soup = self._soup
+        # extract content preview from meta[name='description']
+        meta_description = soup.find('meta',attrs = {"name" : "description"})
+        if(meta_description and meta_description['content'] !=""):
+            return meta_description['content']
+        # else extract preview from the first <p> sibling to the first <h1>
+        first_h1 = soup.find('h1')
+        if first_h1:
+            first_p = first_h1.find_next('p')
+            if (first_p and first_p.string != ''):
+                return first_p.text
+        # else extract preview from the first <p>
+        first_p = soup.find('p')
+        if (first_p and first_p.string != ""):
+            return first_p.string
+        # else
+        return None
+
+    def _get_image(self):
+        """
+        Extract preview image from the given web page.
+        """
+        soup = self._soup
+        # extract the first image which is sibling to the first h1
+        first_h1 = soup.find('h1')
+        if first_h1:
+            first_image = first_h1.find_next_sibling('img')
+            if first_image and first_image['src'] != "":
+                return first_image['src']
+        return None
+
+class LinkPreviewMiddleware(EFBMiddleware):
     """
-    EFB Middleware - MessageBlockerMiddleware
+    EFB Middleware - LinkPreviewMiddleware
     An extension for link preview.
     Author: Catbaron <https://github.com/catbaron>
     """
@@ -52,11 +112,17 @@ class LinkPreview(EFBMiddleware):
         if not url:
             return message
         
-        url = url.group(1)
+        url = quote(url.group(1), safe = string.printable)
         try:
-            title, description, _ = web_preview(url)
+            # dict_elem = link_preview.generate_dict(url)
+            # title = dict_elem['title']
+            # description = dict_elem['description']
+            lp = LinkPreview(url)
+            # title, description, _ = web_preview(url)
+            title = lp.title
+            desc = lp.desc
         except:
-            self.logger.info("Failed to get link preview.")
+            self.logger.error("Failed to get link preview.")
             return message
 
         text = '\n'.join([
@@ -64,7 +130,7 @@ class LinkPreview(EFBMiddleware):
             'preview'.center(23, '='),
             title.center(23),
             '-'*27,
-            description
+            desc
             ])
         
         message.text = text

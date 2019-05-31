@@ -35,9 +35,9 @@ setup(
     install_requires=[
         "ehforwarderbot>=2.0.0b15",
         "python-telegram-bot>=10.0.0<12.0.0",
-        "webpreview",
+        # "link_preview",
     ],
     entry_points={
-        'ehforwarderbot.middleware': 'catbaron.link_preview = efb_link_preview_middleware:LinkPreview'
+        'ehforwarderbot.middleware': 'catbaron.link_preview = efb_link_preview_middleware:LinkPreviewMiddleware'
     }
 )
