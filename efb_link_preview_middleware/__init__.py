@@ -165,7 +165,6 @@ class LinkPreviewMiddleware(EFBMiddleware):
         if not self.sent_by_master(message):
             return message
 
-        import ipdb;ipdb.set_trace()
         msg_text = message.text
         if msg_text.startswith('\\np '):
             message.text = msg_text[3:]
