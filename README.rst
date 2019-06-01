@@ -7,11 +7,21 @@ Notice
 **Middleware ID**: ``catbaron.link_preview``
 
 **LinkPreview** is a middleware for EFB to generqate link preview for
-the first url contained by the message. |example|
+the first url contained by the message.
+
+.. figure:: ./example.jpg
+   :alt: example
+
+   example
+
+.. figure:: ./img_url.png
+   :alt: example
+
+   example
 
 -  For url refering to an image, the image should be sent as preview.
--  Add ``\np`` at the begining of message to avoid preview for current
-   message.
+-  Add ``\np`` at the begining of message to avoid link preview for
+   current message.
 
 You need to use **MessageBlocker** on top of
 `EFB <https://ehforwarderbot.readthedocs.io>`__. Please check the
@@ -22,6 +32,7 @@ Dependense
 
 -  Python >=3.6
 -  EFB >=2.0.0b15
+-  beautifulsoup4
 
 Install
 -------
@@ -52,6 +63,3 @@ Install
 You only need to add the last line to your config file.
 
 -  Restart EFB.
-
-.. |example| image:: ./example.jpg
-
