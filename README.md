@@ -7,8 +7,8 @@
 **LinkPreview** is a middleware for EFB to generqate link preview for the first url contained by the message.
 ![example](./example.jpg)
 
-For url refering to an image, the image should be sent as preview.
-Add `\np` to avoid preview for current message.
+* For url refering to an image, the image should be sent as preview.
+* Add `\np` at the begining of message to avoid preview for current message.
 
 You need to use **MessageBlocker** on top of [EFB](https://ehforwarderbot.readthedocs.io). Please check the document and install EFB first.
 
