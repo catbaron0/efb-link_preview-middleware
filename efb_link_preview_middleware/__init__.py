@@ -25,6 +25,7 @@ class LinkPreview:
         self.desc = self._get_description()
         self.image = self._get_image()
 
+    # _get_*() functions refer to https://github.com/ludbek/webpreview
     def _get_title(self):
         """
         Extract title from the given web page.
