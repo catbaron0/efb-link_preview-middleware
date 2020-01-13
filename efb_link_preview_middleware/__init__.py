@@ -1,5 +1,4 @@
 # coding: utf-8
-import io
 import os
 import re
 import logging
@@ -9,7 +8,7 @@ import urllib.request
 from tempfile import NamedTemporaryFile
 from typing import Optional
 
-from ehforwarderbot import EFBMiddleware, EFBMsg, MsgType
+from ehforwarderbot import Middleware, Message, MsgType, coordinator
 from bs4 import BeautifulSoup
 
 from . import __version__ as version
@@ -129,9 +128,9 @@ class LinkPreview:
                 return first_image['src']
         return ""
 
-class LinkPreviewMiddleware(EFBMiddleware):
+class LinkPreviewMiddleware(Middleware):
     """
-    EFB Middleware - LinkPreviewMiddleware
+    Middleware - LinkPreviewMiddleware
     An extension for link preview.
     Author: Catbaron <https://github.com/catbaron>
     """
@@ -145,22 +144,18 @@ class LinkPreviewMiddleware(EFBMiddleware):
     def __init__(self, instance_id=None):
         super().__init__()
 
-    def sent_by_master(self, message: EFBMsg) -> bool:
-        author = message.author
-        if author and author.module_id and author.module_id == 'blueset.telegram':
-            return True
-        else:
-            return False
+    def sent_by_master(self, message: Message) -> bool:
+        return message.deliver_to != coordinator.master
 
-    def process_message(self, message: EFBMsg) -> Optional[EFBMsg]:
+    def process_message(self, message: Message) -> Optional[Message]:
         """
         Process a message with middleware
 
         Args:
-            message (:obj:`.EFBMsg`): Message object to process
+            message (:obj:`.Message`): Message object to process
 
         Returns:
-            Optional[:obj:`.EFBMsg`]: Processed message or None if discarded.
+            Optional[:obj:`.Message`]: Processed message or None if discarded.
         """
         if not self.sent_by_master(message):
             return message
