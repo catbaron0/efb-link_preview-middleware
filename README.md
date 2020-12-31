@@ -24,9 +24,7 @@ You need to use **MessageBlocker** on top of [EFB](https://ehforwarderbot.readth
 
 * Install 
 ```
-git clone https://github.com/catbaron0/efb-link_preview-middleware
-cd efb-link_preview-middleware
-sudo python setup.py install
+pip install efb-link-preview-middleware
 ```
 * Register to EFB
 Following [this document](https://ehforwarderbot.readthedocs.io/en/latest/getting-started.html) to edit the config file. The config file by default is `~/.ehforwarderbot/profiles/default`. It should look like:

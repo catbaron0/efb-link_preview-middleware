@@ -15,6 +15,7 @@ setup(
     version=__version__,
     description='WeChat Middleware of EH Forwarder Bot for link preview',
     long_description=long_description,
+    long_description_content_type="text/markdown",
     author='catbaron',
     author_email='catbaron@live.cn',
     license='AGPLv3+',
@@ -22,7 +23,7 @@ setup(
     python_requires='>=3.6',
     keywords=['ehforwarderbot', 'EH Forwarder Bot', 'EH Forwarder Bot Middleware', 'chatbot', 'link preview'],
     classifiers=[
-        "Development Status :: 1 - Alpha",
+        "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
         "Intended Audience :: Developers",
         "Intended Audience :: End Users/Desktop",
